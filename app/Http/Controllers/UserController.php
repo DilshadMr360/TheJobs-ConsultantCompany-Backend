@@ -26,7 +26,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'user' => User::all()
+            'users' => User::all()
         ]);
     }
 
@@ -52,13 +52,23 @@ class UserController extends Controller
         ]);
 
         // Validation passed, create the appointment
-        $user = User::create([
+        $created_user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             'role' => $request->input('role'),
             'password' => Hash::make($request->input('password'))
         ]);
+
+        $user = User::find($created_user->id);
+
+        if($request->jobs){
+            $user->jobs()->attach($request->jobs);
+        }
+
+        if($request->countries){
+            $user->countries()->attach($request->countries);
+        }
 
         // Optionally, you can return a response indicating success or the created appointment
         return response()->json([ 
@@ -73,10 +83,11 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->jobs()->attach([1,4]);
         return response()->json([
             'success' => true,
-            'user' => $user->with('countries', 'jobs')->get()
+            'user' => $user,
+            'countries' => $user->countries->pluck('íd'),
+            'jobs' => $user->jobs->pluck('íd'),
         ]);
     }
 
@@ -98,24 +109,42 @@ class UserController extends Controller
             'email' => 'required',
             'phone' => 'required',
             'role' => 'required',
-            'password' => 'required',
         ]);
 
-        // If the country doesn't exist, return a not found response
+        if($request->password){
+            $request->validate([
+                'password' => 'required|min:8|confirmed'
+            ]);
+
+            $user->update([
+                'password' => hash::make($request->password)
+            ]);
+        }
+
+        // If the user doesn't exist, return a not found response
         if (!$user) {
             return response()->json([
                 'message' => 'User not found'
             ], 404); // 404 Not Found status code
         }
 
-        // Update the country attributes
+        // Update the user attributes
         $user->update([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             'role' => $request->input('role'),
-            'password' => Hash::make($request->input('password'))
         ]);
+
+        if($request->jobs){
+            $user->jobs()->detach();
+            $user->jobs()->attach($request->jobs);
+        }
+
+        if($request->countries){
+            $user->jobs()->detach();
+            $user->countries()->attach($request->countries);
+        }
 
         return response()->json([
             'success' => true,
@@ -132,10 +161,11 @@ class UserController extends Controller
         if (!$user) {
             return response()->json([
                 'message' => 'User not found'
+                
             ], 404); // 404 Not Found status code
         }
 
-        // Delete the appointment
+        // Delete the user
         $user->delete();
 
         // Optionally, you can return a response indicating success
