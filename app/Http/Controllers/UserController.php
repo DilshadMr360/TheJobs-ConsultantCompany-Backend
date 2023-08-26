@@ -30,6 +30,26 @@ class UserController extends Controller
         ]);
     }
 
+
+
+    public function find(Request $request)
+    {
+        $query = User::query();
+
+        if($request->role){
+            $query->where('role', $request->role);
+        }
+
+        if($request->role){
+            $query->where('role', $request->role);
+        }
+
+        return response()->json([
+            'success' => true,
+            'users' => User::all()
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
