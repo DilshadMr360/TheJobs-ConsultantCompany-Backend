@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Job extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'name',
-       
+
     ];
-    use HasFactory;
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'users_jobs')->withTimestamps();
+    }
 }

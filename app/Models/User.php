@@ -45,11 +45,13 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    function countries() {
-        return $this->belongsToMany(Country::class, 'users_countries', 'user_id', 'country_id');
+    public function jobs()
+    {
+        return $this->belongsToMany(Job::class, 'users_jobs')->withTimestamps();
     }
 
-    function jobs() {
-        return $this->belongsToMany(Job::class, 'users_jobs', 'user_id', 'job_id');
+    public function countries()
+    {
+        return $this->belongsToMany(Country::class, 'users_countries')->withTimestamps();
     }
 }

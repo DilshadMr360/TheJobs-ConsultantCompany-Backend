@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -16,11 +15,11 @@ class UserController extends Controller
     {
         $query = User::query();
 
-        if($request->role){
+        if ($request->role) {
             $query->where('role', $request->role);
         }
 
-        if($request->role){
+        if ($request->role) {
             $query->where('role', $request->role);
         }
 
@@ -30,23 +29,23 @@ class UserController extends Controller
         ]);
     }
 
-
-
     public function find(Request $request)
     {
-        $query = User::query();
+        $job_id = $request->job_id ?? 0;
+        $country_id = $request->country_id ?? 0;
 
-        if($request->role){
-            $query->where('role', $request->role);
-        }
-
-        if($request->role){
-            $query->where('role', $request->role);
-        }
+        $users = User::where('role', 'consultant')
+            ->whereHas('jobs', function ($query) use ($job_id) {
+                $query->where('job_id', $job_id);
+            })
+            ->whereHas('countries', function ($query) use ($country_id) {
+                $query->where('country_id', $country_id);
+            })
+            ->get();
 
         return response()->json([
             'success' => true,
-            'users' => User::all()
+            'users' => $users
         ]);
     }
 
@@ -82,16 +81,16 @@ class UserController extends Controller
 
         $user = User::find($created_user->id);
 
-        if($request->jobs){
+        if ($request->jobs) {
             $user->jobs()->attach($request->jobs);
         }
 
-        if($request->countries){
+        if ($request->countries) {
             $user->countries()->attach($request->countries);
         }
 
         // Optionally, you can return a response indicating success or the created appointment
-        return response()->json([ 
+        return response()->json([
             'success' => true,
             'message' => 'User Created Successfully',
             'user' => $user
@@ -131,7 +130,7 @@ class UserController extends Controller
             'role' => 'required',
         ]);
 
-        if($request->password){
+        if ($request->password) {
             $request->validate([
                 'password' => 'required|min:8|confirmed'
             ]);
@@ -156,12 +155,12 @@ class UserController extends Controller
             'role' => $request->input('role'),
         ]);
 
-        if($request->jobs){
+        if ($request->jobs) {
             $user->jobs()->detach();
             $user->jobs()->attach($request->jobs);
         }
 
-        if($request->countries){
+        if ($request->countries) {
             $user->jobs()->detach();
             $user->countries()->attach($request->countries);
         }
@@ -170,7 +169,6 @@ class UserController extends Controller
             'success' => true,
             'user' => $user
         ]);
-      
     }
 
     /**
@@ -181,7 +179,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json([
                 'message' => 'User not found'
-                
+
             ], 404); // 404 Not Found status code
         }
 

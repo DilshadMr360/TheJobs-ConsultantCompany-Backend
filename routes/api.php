@@ -26,7 +26,6 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::resource('/countries', CountryController::class)->only(['index']);
 Route::resource('/jobs',JobController::class)->only(['index']);;
 Route::get('/consultants', [UserController::class, 'find']);
-
 // Authenticated Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user', function (Request $request) {
