@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class AppointmentController extends Controller
 {
@@ -31,18 +32,21 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'consultant_id' => 'required|exists:consultants,id',
+            'consultant_id' => 'required|exists:users,id',
             'country_id' => 'required|exists:countries,id',
             'job_id' => 'required|exists:jobs,id',
             'time' => 'required'
         ]);
 
+        $appointmentTime = Carbon::parse($request->input('time'));
+
         // Validation passed, create the appointment
         $appointment = Appointment::create([
+            'client_id' => $request->user()->id,
             'consultant_id' => $request->input('consultant_id'),
             'country_id' => $request->input('country_id'),
             'job_id' => $request->input('job_id'),
-            'time' => $request->input('time')
+            'time' => $appointmentTime
         ]);
 
         // Optionally, you can return a response indicating success or the created appointment
@@ -50,6 +54,8 @@ class AppointmentController extends Controller
             'success' => true,
             'appointment' => $appointment
         ], 201); // 201 Created status code
+
+
     }
 
     /**
@@ -77,7 +83,7 @@ class AppointmentController extends Controller
     public function update(Request $request, Appointment $appointment)
     {
         $request->validate([
-            'consultant_id' => 'required|exists:consultants,id',
+            'consultant_id' => 'required|exists:users,id',
             'country_id' => 'required|exists:countries,id',
             'job_id' => 'required|exists:jobs,id',
             'time' => 'required'
