@@ -11,11 +11,23 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
+        switch ($user->role){
+            case 'admin':
+                $appointments = Appointment::all();
+                break;
+            case 'consultant':
+                $appointments = Appointment::where('consultant_id', $user->id);
+                break;
+            default:
+                $appointments = Appointment::where('client_id', $user->id);
+        }
+
         return response()->json([
             'success' => true,
-            'appointments' => Appointment::all()
+            'appointments' => $appointments->with('client', 'consultant', 'job', 'country')->get()
         ]);
     }
 

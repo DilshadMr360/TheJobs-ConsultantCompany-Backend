@@ -162,6 +162,7 @@ class UserController extends Controller
 
         if ($request->countries) {
             $user->jobs()->detach();
+            dd($request->countries);
             $user->countries()->attach($request->countries);
         }
 

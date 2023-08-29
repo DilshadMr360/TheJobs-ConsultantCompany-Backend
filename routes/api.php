@@ -26,29 +26,27 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::resource('/countries', CountryController::class)->only(['index']);
 Route::resource('/jobs',JobController::class)->only(['index']);;
 Route::get('/consultants', [UserController::class, 'find']);
+
 // Authenticated Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-    Route::resource('/countries', CountryController::class)->except(['index']);
-    Route::resource('/jobs',JobController::class)->except(['index']);;
     Route::resource('/appointments', AppointmentController::class);
-    Route::resource('/users', UserController::class);
-
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
     Route::group(['middleware' => ['role:client']], function () {
 
     });
 
     Route::group(['middleware' => ['role:consultant']], function () {
 
-
     });
 
     Route::group(['middleware' => ['role:admin']], function () {
-
-
+        Route::resource('/countries', CountryController::class)->except(['index']);
+        Route::resource('/jobs',JobController::class)->except(['index']);;
+        Route::resource('/users', UserController::class);
     });
 });
