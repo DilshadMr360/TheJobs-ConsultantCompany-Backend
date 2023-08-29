@@ -105,8 +105,8 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'user' => $user,
-            'countries' => $user->countries->pluck('íd'),
-            'jobs' => $user->jobs->pluck('íd'),
+            'jobs' => $user->jobs->pluck('id'),
+            'countries'=> $user->countries->pluck('id'),
         ]);
     }
 
@@ -156,14 +156,11 @@ class UserController extends Controller
         ]);
 
         if ($request->jobs) {
-            $user->jobs()->detach();
-            $user->jobs()->attach($request->jobs);
+            $user->jobs()->sync($request->jobs);
         }
 
         if ($request->countries) {
-            $user->jobs()->detach();
-            dd($request->countries);
-            $user->countries()->attach($request->countries);
+            $user->countries()->sync($request->countries);
         }
 
         return response()->json([

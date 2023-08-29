@@ -16,18 +16,18 @@ class AppointmentController extends Controller
         $user = $request->user();
         switch ($user->role){
             case 'admin':
-                $appointments = Appointment::all();
+                $appointments = Appointment::with('client', 'consultant', 'job', 'country');
                 break;
             case 'consultant':
-                $appointments = Appointment::where('consultant_id', $user->id);
+                $appointments = Appointment::with('client', 'consultant', 'job', 'country')->where('consultant_id', $user->id);
                 break;
             default:
-                $appointments = Appointment::where('client_id', $user->id);
+                $appointments = Appointment::with('client', 'consultant', 'job', 'country')->where('client_id', $user->id);
         }
 
         return response()->json([
             'success' => true,
-            'appointments' => $appointments->with('client', 'consultant', 'job', 'country')->get()
+            'appointments' => $appointments->get()
         ]);
     }
 
