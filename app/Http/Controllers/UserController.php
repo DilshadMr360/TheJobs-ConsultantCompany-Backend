@@ -65,7 +65,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email', // Assuming the table name for users is 'users'
-            'phone' => 'required|unique:users,phone', // Assuming the table name for users is 'users'
+            'phone' => 'required|string|max:16|regex:/^[0-9]*$/|unique:users',
             'role' => 'required|in:client,consultant,admin',
             'password' => 'required|string|min:8|confirmed'
         ]);
@@ -125,9 +125,10 @@ class UserController extends Controller
     {
 
         $request->validate([
-            'email' => 'required',
-            'phone' => 'required',
-            'role' => 'required',
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email', // Assuming the table name for users is 'users'
+            'phone' => 'required|string|max:16|regex:/^[0-9]*$/|unique:users',
+            'role' => 'required|in:client,consultant,admin',
         ]);
 
         if ($request->password) {

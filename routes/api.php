@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -49,4 +50,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::resource('/jobs',JobController::class)->except(['index']);;
         Route::resource('/users', UserController::class);
     });
+
+
+    Route::get('/dashboard', [DashboardController::class,'index']);
+
+
 });

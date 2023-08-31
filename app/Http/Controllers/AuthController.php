@@ -13,7 +13,7 @@ class AuthController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:16|unique:users',
+          'phone' => 'required|string|max:16|regex:/^[0-9]*$/|unique:users',
             'password' => 'required|confirmed|string|min:8',
         ]);
         $user = User::create([
@@ -44,7 +44,7 @@ class AuthController extends Controller
                 'message' => ['Invalid credentials'],
             ]);
         }
- 
+
         return response()->json([
             'success' => true,
             'message' => 'Login successful',
