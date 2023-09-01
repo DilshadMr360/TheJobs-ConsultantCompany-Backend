@@ -19,10 +19,14 @@ class AppointmentController extends Controller
                 $appointments = Appointment::with('client', 'consultant', 'job', 'country');
                 break;
             case 'consultant':
-                $appointments = Appointment::with('client', 'consultant', 'job', 'country')->where('consultant_id', $user->id);
+                $appointments = Appointment::with('client', 'consultant', 'job', 'country')->where('consultant_id', $user->id)->where('status', 'approved');
                 break;
             default:
                 $appointments = Appointment::with('client', 'consultant', 'job', 'country')->where('client_id', $user->id);
+        }
+
+        if($request->status && $request->status != 'all'){
+            $appointments = $appointments->where('status', $request->status);
         }
 
         return response()->json([
@@ -120,6 +124,27 @@ class AppointmentController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Appointment updated successfully',
+            'appointment' => $appointment
+        ]);
+    }
+
+    public function review(Appointment $appointment, Request $request)
+    {
+        if($request->accept == 'true'){
+            $appointment->update([
+                'status' => 'approved'
+            ]);
+        }
+
+        if($request->accept == 'false'){
+            $appointment->update([
+                'status' => 'rejected'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Appointment has been ' . $appointment->status,
             'appointment' => $appointment
         ]);
     }

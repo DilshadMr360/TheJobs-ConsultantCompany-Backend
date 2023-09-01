@@ -15,17 +15,22 @@ class UserController extends Controller
     {
         $query = User::query();
 
-        if ($request->role) {
+        if ($request->role && $request->role != 'all') {
             $query->where('role', $request->role);
         }
 
-        if ($request->role) {
-            $query->where('role', $request->role);
+        if($request->search){
+            $search = $request->search;
+            $query->where(function ($query) use($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                   ->orWhere('email', 'like', '%' . $search . '%')
+                   ->orWhere('phone', 'like', '%' . $search . '%');
+            });
         }
 
         return response()->json([
             'success' => true,
-            'users' => User::all()
+            'users' => $query->get()
         ]);
     }
 

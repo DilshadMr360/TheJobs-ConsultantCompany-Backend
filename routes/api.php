@@ -30,13 +30,6 @@ Route::get('/consultants', [UserController::class, 'find']);
 
 // Authenticated Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
-    Route::resource('/appointments', AppointmentController::class);
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
     Route::group(['middleware' => ['role:client']], function () {
 
     });
@@ -49,10 +42,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::resource('/countries', CountryController::class)->except(['index']);
         Route::resource('/jobs',JobController::class)->except(['index']);;
         Route::resource('/users', UserController::class);
+        Route::get('/appointments/{appointment}/review', [AppointmentController::class, 'review']);
     });
-
-
     Route::get('/dashboard', [DashboardController::class,'index']);
-
+    Route::resource('/appointments', AppointmentController::class);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 });
