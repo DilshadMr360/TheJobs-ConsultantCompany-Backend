@@ -85,17 +85,8 @@ class AppointmentController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Appointment $appointment)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
+   
     public function update(Request $request, Appointment $appointment)
     {
         $request->validate([
