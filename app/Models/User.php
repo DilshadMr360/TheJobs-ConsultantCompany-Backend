@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Country::class, 'users_countries')->withTimestamps();
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

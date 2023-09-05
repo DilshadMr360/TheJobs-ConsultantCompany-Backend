@@ -86,7 +86,7 @@ class AppointmentController extends Controller
     }
 
 
-   
+
     public function update(Request $request, Appointment $appointment)
     {
         $request->validate([
