@@ -12,6 +12,5 @@ class Notification extends Model
         'user_id',
         'appointment_id',
         'message',
-
     ];
 }

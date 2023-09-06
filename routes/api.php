@@ -53,6 +53,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::resource('/notifications', NotificationController::class)->only(['index']);
-
-
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::put('/profile', [AuthController::class, 'update_profile']);
 });

@@ -16,7 +16,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         return response()->json([
             'success' => true,
-            'notificaions' => $user->notifications
+            'notifications' => $user->notifications
         ]);
     }
 
@@ -41,7 +41,7 @@ class NotificationController extends Controller
      */
     public function show(Notification $notification)
     {
-        
+
     }
 
     /**

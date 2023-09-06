@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
@@ -47,6 +49,14 @@ class AppointmentController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
+        if($user->role == 'admin') {
+            $request->validate([
+                'client_id' => 'required|exists:users,id'
+            ]);
+        }
+
         $request->validate([
             'consultant_id' => 'required|exists:users,id',
             'country_id' => 'required|exists:countries,id',
@@ -55,10 +65,9 @@ class AppointmentController extends Controller
         ]);
 
         $appointmentTime = Carbon::parse($request->input('time'));
-
         // Validation passed, create the appointment
         $appointment = Appointment::create([
-            'client_id' => $request->user()->id,
+            'client_id' => $user->role == 'admin' ? $request->client_id : $user->id,
             'consultant_id' => $request->input('consultant_id'),
             'country_id' => $request->input('country_id'),
             'job_id' => $request->input('job_id'),
@@ -125,11 +134,27 @@ class AppointmentController extends Controller
             $appointment->update([
                 'status' => 'approved'
             ]);
+            Notification::create([
+                'appointment_id' => $appointment->id,
+                'user_id' => $appointment->client->id,
+                'message' => "Your appointment has been approved."
+            ]);
+
+            Notification::create([
+                'appointment_id' => $appointment->id,
+                'user_id' => $appointment->consultant->id,
+                'message' => "Your recived a new appointment."
+            ]);
         }
 
         if($request->accept == 'false'){
             $appointment->update([
                 'status' => 'rejected'
+            ]);
+            Notification::create([
+                'appointment_id' => $appointment->id,
+                'user_id' => $appointment->client->id,
+                'message' => "Your appointment has been rejected."
             ]);
         }
 
