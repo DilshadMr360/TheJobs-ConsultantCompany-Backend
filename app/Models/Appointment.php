@@ -17,4 +17,20 @@ class Appointment extends Model
         'time',
         'status'
     ];
+
+    public function client(){
+        return $this->belongsTo(User::class, 'client_id', 'id');
+    }
+
+    public function consultant(){
+        return $this->belongsTo(User::class, 'consultant_id', 'id');
+    }
+
+    public function country(){
+        return $this->belongsTo(Country::class);
+    }
+
+    public function job(){
+        return $this->belongsTo(Job::class);
+    }
 }
