@@ -177,8 +177,15 @@ class AppointmentController extends Controller
             ], 404); // 404 Not Found status code
         }
 
+        Notification::create([
+            'appointment_id' => null,
+            'user_id' => $appointment->client->id,
+            'message' => "Your appointment has been deleted."
+        ]);
+
         // Delete the appointment
         $appointment->delete();
+
 
         // Optionally, you can return a response indicating success
         return response()->json([

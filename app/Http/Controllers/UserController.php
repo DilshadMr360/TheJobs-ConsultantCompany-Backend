@@ -131,8 +131,8 @@ class UserController extends Controller
 
         $request->validate([
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email', // Assuming the table name for users is 'users'
-            'phone' => 'required|string|max:16|regex:/^[0-9]*$/|unique:users',
+            'email' => 'required|email|unique:users,email,'. $user->id, // Assuming the table name for users is 'users'
+            'phone' => 'required|string|max:16|regex:/^[0-9]*$/|unique:users,phone,' . $user->id,
             'role' => 'required|in:client,consultant,admin',
         ]);
 
