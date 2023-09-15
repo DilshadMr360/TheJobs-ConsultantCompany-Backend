@@ -7,6 +7,7 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -73,6 +74,19 @@ class AppointmentController extends Controller
             'job_id' => $request->input('job_id'),
             'time' => $appointmentTime
         ]);
+
+        Mail::send('mail.appointment-created',
+        [
+            'user' => $user,
+            'appointment' => $appointment
+
+        ], function ($mail) use ($user, $appointment) {
+
+            $mail->to($user->email, 'Appointment')
+                 ->subject('Appointment Recieved ' . $appointment->id)
+                 ->cc($appointment->consultant->email, 'New Appointment');
+
+        });
 
         // Optionally, you can return a response indicating success or the created appointment
         return response()->json([

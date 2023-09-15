@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('appointment_id')->nullable();
             $table->string('message');
+            $table->boolean('read')->default(false);
             $table->timestamps();
         });
     }
