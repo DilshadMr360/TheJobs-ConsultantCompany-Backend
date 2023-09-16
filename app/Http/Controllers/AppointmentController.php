@@ -32,11 +32,52 @@ class AppointmentController extends Controller
             $appointments = $appointments->where('status', $request->status);
         }
 
+
+        if($request->search){
+            $search = $request->search;
+            $appointments->where(function ($appointments) use($search) {
+                $appointments->where('client', 'like', '%' . $search . '%')
+                   ->orWhere('consultant', 'like', '%' . $search . '%')
+                   ->orWhere('country', 'like', '%' . $search . '%')
+                   ->orWhere('job', 'like', '%' . $search . '%');
+            });
+        }
+
+
         return response()->json([
             'success' => true,
             'appointments' => $appointments->get()
         ]);
     }
+
+
+    // public function find(Request $request)
+    // {
+    //     $job_id = $request->job_id ?? 0;
+    //     $client_id = $request->client_id ?? 0;
+    //     $consultant_id = $request->consultant_id ?? 0;
+    //     $country_id = $request->country_id ?? 0;
+
+    //     $appointments = Appointment::where('role', 'consultant')
+    //         ->whereHas('jobs', function ($query) use ($job_id) {
+    //             $query->where('job_id', $job_id);
+    //         })
+    //         ->whereHas('client', function ($query) use ($client_id) {
+    //             $query->where('client_id', $client_id);
+    //         })
+    //         ->whereHas('consultant', function ($query) use ($consultant_id) {
+    //             $query->where('consultant_id', $consultant_id);
+    //         })
+    //         ->whereHas('country', function ($query) use ($country_id) {
+    //             $query->where('country_id', $country_id);
+    //         })
+    //         ->get();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'appointments' => $appointments
+    //     ]);
+    // }
 
     /**
      * Show the form for creating a new resource.

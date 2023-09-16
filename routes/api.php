@@ -55,4 +55,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('/notifications', NotificationController::class)->only(['index']);
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::put('/profile', [AuthController::class, 'update_profile']);
+
+
+
+// routes/api.php
+
+Route::put('/notifications/mark-as-read', [NotificationController::class, 'markAllAsRead']);
+
 });
