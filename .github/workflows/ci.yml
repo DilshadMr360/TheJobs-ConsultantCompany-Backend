@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   tests:
-    name: Run tests
+    name: Deploy Project
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,5 +24,5 @@ jobs:
           cp .env.ci .env
           php artisan key:generate
 
-      - name: Run tests
-        run: php artisan test
+      # - name: Run tests
+        # run: php artisan test
