@@ -17,36 +17,34 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $query = Appointment::query();
+        $query->with('client', 'consultant', 'job', 'country');
+
         switch ($user->role){
             case 'admin':
-                $appointments = Appointment::with('client', 'consultant', 'job', 'country');
                 break;
             case 'consultant':
-                $appointments = Appointment::with('client', 'consultant', 'job', 'country')->where('consultant_id', $user->id)->where('status', 'approved');
+                $query->where('consultant_id', $user->id)->where('status', 'approved');
                 break;
             default:
-                $appointments = Appointment::with('client', 'consultant', 'job', 'country')->where('client_id', $user->id);
+                $query->where('client_id', $user->id);
         }
 
         if($request->status && $request->status != 'all'){
-            $appointments = $appointments->where('status', $request->status);
+            $query->where('status', $request->status);
         }
-
 
         if($request->search){
             $search = $request->search;
-            $appointments->where(function ($appointments) use($search) {
-                $appointments->where('client', 'like', '%' . $search . '%')
-                   ->orWhere('consultant', 'like', '%' . $search . '%')
-                   ->orWhere('country', 'like', '%' . $search . '%')
-                   ->orWhere('job', 'like', '%' . $search . '%');
+            $query->whereHas('client', function($q) use ($search){
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
 
-
         return response()->json([
             'success' => true,
-            'appointments' => $appointments->get()
+            'appointments' => $query->get()
         ]);
     }
 
