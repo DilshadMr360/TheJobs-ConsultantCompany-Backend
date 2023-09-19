@@ -41,7 +41,6 @@ class NotificationController extends Controller
      */
     public function show(Notification $notification)
     {
-
     }
 
     /**
@@ -68,18 +67,13 @@ class NotificationController extends Controller
         //
     }
 
-
-    // NotificationController.php
-
-public function markAllAsRead()
-{
-    $user = Auth::user();
-    $user->unreadNotifications->markAsRead();
-
-    return response()->json(['message' => 'All notifications marked as read']);
-}
-
-
-
-
+    public function mark_all_read()
+    {
+        $user = Auth::user();
+        $user->notifications->each(function ($notification){
+            $notification->read = true;
+            $notification->save();
+        });
+        return response()->json(['message' => 'All notifications marked as read']);
+    }
 }
